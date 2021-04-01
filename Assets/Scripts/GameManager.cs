@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private List<Flask> flasks;
-    [SerializeField] private List<Color> colors;
+    [SerializeField] private Flask[] flasks;
+    [SerializeField] private Color[] colors;
     [SerializeField] private Ball ballPrefab;
     [SerializeField] private Flask flaskPrefab;
     [SerializeField] private int emptyFlasksCount;
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
         foreach (var item in flasks)
             if (item.IsFullAndSameColors())
                 collected++;
-        return collected == colors.Count;
+        return collected == colors.Length;
     }
 
     private void SpawnFlasks()
@@ -60,13 +60,15 @@ public class GameManager : MonoBehaviour
         Vector3 spawnPoint = new Vector3(-2, 0, 1);
         Vector3 indent = new Vector3(flaskPrefab.transform.localScale.x * 2, 0);
 
-        for (int i = 0; i < colors.Count + emptyFlasksCount; i++)
+        flasks = new Flask[colors.Length + emptyFlasksCount];
+
+        for (int i = 0; i < flasks.Length; i++)
         {
             var flask = Instantiate(flaskPrefab, spawnPoint, Quaternion.identity);
             flask.CalculateBallPositions(flaskCapacity, ballPrefab.Radius, 0.1f);
 
             flask.Touched.AddListener(OnFlaskTouch);
-            flasks.Add(flask);
+            flasks[i] = flask;
 
             spawnPoint += indent;
         }
@@ -74,23 +76,23 @@ public class GameManager : MonoBehaviour
 
     private void FillFlasks()
     {
-        List<Ball> balls = new List<Ball>();
-        for (int i = 0; i < flaskCapacity * colors.Count; i++)
+        Ball[] balls = new Ball[flaskCapacity * colors.Length];
+        for (int i = 0; i < balls.Length; i++)
         {
             var ball = Instantiate(ballPrefab);
-            ball.Color = colors[i % colors.Count];
-            balls.Add(ball);
+            ball.Color = colors[i % colors.Length];
+            balls[i] = ball;
         }
-        for (int i = 0; i < balls.Count; i++)
+        for (int i = 0; i < balls.Length; i++)
         {
-            int toSwap = Random.Range(0, balls.Count);
+            int toSwap = Random.Range(0, balls.Length);
             var buf = balls[toSwap];
             balls[toSwap] = balls[i];
             balls[i] = buf;
         }
         Flask flask = flasks[0];
         int next = 1;
-        for (int i = 0; i < balls.Count; i++)
+        for (int i = 0; i < balls.Length; i++)
         {
             if (flask.IsFull)
                 flask = flasks[next++];
