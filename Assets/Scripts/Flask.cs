@@ -1,6 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
 public class Flask : MonoBehaviour
 {
     [SerializeField] private List<Vector2> allCells;
@@ -10,15 +11,19 @@ public class Flask : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private float indent;
 
+    public bool IsFull => countBalls == balls.Count;
+    public int Fullness => balls.Count;
 
-    void Start()
+    public FlaskEvent Touched = new FlaskEvent();
+
+    void Awake()
     {
         GetCountCell(countBalls, radius, indent);
     }
 
-    void Update()
+    void OnMouseDown()
     {
-        
+        Touched.Invoke(this);
     }
 
     private void GetCountCell(int countBalls, float radius, float indent)
@@ -47,7 +52,22 @@ public class Flask : MonoBehaviour
         return true;
     }
 
-    private bool TryTake(out Ball ball)
+    public bool TryPeek(out Ball ball)
+    {
+        if (balls.Count == 0)
+        {
+            ball = null;
+            return false;
+        }
+        else
+        {
+            int index = balls.Count - 1;
+            ball = balls[index];
+            return true;
+        }
+    }
+
+    public bool TryTake(out Ball ball)
     {
         if (balls.Count == 0)
         {
@@ -63,7 +83,7 @@ public class Flask : MonoBehaviour
         }
     }
 
-    private bool TryPut(Ball ball)
+    public bool TryPut(Ball ball)
     {
         if (balls.Count == countBalls)
         {
@@ -72,16 +92,17 @@ public class Flask : MonoBehaviour
         else
         {
             balls.Add(ball);
+            ball.transform.SetParent(this.transform);
             ball.transform.position = allCells[balls.Count - 1];
             return true;
         }
     }
 
-    //void OnDrawGizmosSelected()
-    //{
+    // void OnDrawGizmosSelected()
+    // {
     //    // Draw a yellow sphere at the transform's position
     //    Gizmos.color = Color.yellow;
     //    foreach (var item in allCells)
-    //        Gizmos.DrawSphere(item, ballSize);
-    //}
+    //        Gizmos.DrawSphere(item, radius);
+    // }
 }
