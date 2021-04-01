@@ -4,13 +4,15 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     [SerializeField] private IReadOnlyList<Flask> flasks;
-    [SerializeField] private List<Color> colors;
+    [SerializeField] private IReadOnlyList<Color> colors;
     [SerializeField] private Ball ballPrefab;
     [SerializeField] private int countBalls;
 
     private void Start()
     {
-        flasks = GetComponent<GameManager>().Flasks;
+        var gm = GetComponent<GameManager>();
+        flasks = gm.Flasks;
+        colors = gm.Colors;
         FillFlasks();
     }
 

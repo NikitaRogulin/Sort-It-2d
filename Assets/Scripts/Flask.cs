@@ -16,37 +16,26 @@ public class Flask : MonoBehaviour
 
     public FlaskEvent Touched = new FlaskEvent();
 
-    void Awake()
+    private void Awake()
     {
         GetCountCell(countBalls, radius, indent);
     }
 
-    void OnMouseDown()
+    private void OnMouseDown()
     {
         Touched.Invoke(this);
     }
 
-    private void GetCountCell(int countBalls, float radius, float indent)
+    //неоптимизировано
+    public bool IsFullAndSameColors()
     {
-        var localBorder = transform.position.y - transform.localScale.y * 0.5f;
-        var startPosition = localBorder + indent + radius;
-        var diametr = radius * 2;
-        for(int i = 0; i < countBalls; i++)
-        {
-            allCells.Add(new Vector2(transform.position.x, startPosition));
-            startPosition += diametr + indent;
-        }
-    }
-
-    public bool CollectedWithSameColors()
-    {
-        if (balls.Count != countBalls || balls.Count == 0)
+        if (!IsFull)
             return false;
 
         Color color = balls[0].Color;
 
-        for(int i = 1; i < balls.Count; i++)
-            if (color != balls[i].Color)
+        foreach (var item in balls)
+            if (item.Color != color)
                 return false;
 
         return true;
@@ -80,6 +69,18 @@ public class Flask : MonoBehaviour
             ball.transform.SetParent(this.transform);
             ball.transform.position = allCells[balls.Count - 1];
             return true;
+        }
+    }
+
+    private void GetCountCell(int countBalls, float radius, float indent)
+    {
+        var localBorder = transform.position.y - transform.localScale.y * 0.5f;
+        var startPosition = localBorder + indent + radius;
+        var diametr = radius * 2;
+        for (int i = 0; i < countBalls; i++)
+        {
+            allCells.Add(new Vector2(transform.position.x, startPosition));
+            startPosition += diametr + indent;
         }
     }
 
