@@ -4,26 +4,32 @@ using UnityEngine.Events;
 
 public class Flask : MonoBehaviour
 {
-    [SerializeField] private List<Vector2> allCells;
-    [SerializeField] private List<Ball> balls;
+    [SerializeField] private List<Vector2> allCells = new List<Vector2>();
+    [SerializeField] private List<Ball> balls = new List<Ball>();
 
-    [SerializeField] private int countBalls;
-    [SerializeField] private float radius;
-    [SerializeField] private float indent;
+    private int countBalls;
 
     public bool IsFull => countBalls == balls.Count;
     public int Fullness => balls.Count;
 
     public FlaskEvent Touched = new FlaskEvent();
 
-    private void Awake()
-    {
-        GetCountCell(countBalls, radius, indent);
-    }
-
     private void OnMouseDown()
     {
         Touched.Invoke(this);
+    }
+
+    public void CalculateBallPositions(int countBalls, float radius, float indent)
+    {
+        this.countBalls = countBalls;
+        var localBorder = transform.position.y - transform.localScale.y * 0.5f;
+        var startPosition = localBorder + indent + radius;
+        var diametr = radius * 2;
+        for (int i = 0; i < countBalls; i++)
+        {
+            allCells.Add(new Vector2(transform.position.x, startPosition));
+            startPosition += diametr + indent;
+        }
     }
 
     //неоптимизировано
@@ -69,18 +75,6 @@ public class Flask : MonoBehaviour
             ball.transform.SetParent(this.transform);
             ball.transform.position = allCells[balls.Count - 1];
             return true;
-        }
-    }
-
-    private void GetCountCell(int countBalls, float radius, float indent)
-    {
-        var localBorder = transform.position.y - transform.localScale.y * 0.5f;
-        var startPosition = localBorder + indent + radius;
-        var diametr = radius * 2;
-        for (int i = 0; i < countBalls; i++)
-        {
-            allCells.Add(new Vector2(transform.position.x, startPosition));
-            startPosition += diametr + indent;
         }
     }
 
