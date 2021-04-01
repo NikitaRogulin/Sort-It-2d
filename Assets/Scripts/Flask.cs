@@ -52,21 +52,6 @@ public class Flask : MonoBehaviour
         return true;
     }
 
-    public bool TryPeek(out Ball ball)
-    {
-        if (balls.Count == 0)
-        {
-            ball = null;
-            return false;
-        }
-        else
-        {
-            int index = balls.Count - 1;
-            ball = balls[index];
-            return true;
-        }
-    }
-
     public bool TryTake(out Ball ball)
     {
         if (balls.Count == 0)
