@@ -3,13 +3,11 @@ using UnityEngine;
 
 public class Flask : MonoBehaviour
 {
-    [SerializeField] private List<Vector2> allCells = new List<Vector2>();
-    [SerializeField] private List<Ball> balls = new List<Ball>();
+    [SerializeField] private Vector2[] allCells;
+    [SerializeField] private List<Ball> balls;
 
-    private int countBalls;
-
-    public bool IsFull => countBalls == balls.Count;
-    public int Fullness => balls.Count;
+    public bool IsFull => balls.Capacity == balls.Count;
+    public int Count => balls.Count;
 
     public FlaskEvent Touched = new FlaskEvent();
 
@@ -20,14 +18,17 @@ public class Flask : MonoBehaviour
 
     public void CalculateBallPositions(int countBalls, float radius, float indent)
     {
-        this.countBalls = countBalls;
+        allCells = new Vector2[countBalls];
+        balls = new List<Ball>(countBalls);
+
         var localBorder = transform.position.y - transform.localScale.y * 0.5f;
         var startPosition = localBorder + indent + radius;
-        var diametr = radius * 2;
+        var diameter = radius * 2;
+
         for (int i = 0; i < countBalls; i++)
         {
-            allCells.Add(new Vector2(transform.position.x, startPosition));
-            startPosition += diametr + indent;
+            allCells[i] = new Vector2(transform.position.x, startPosition);
+            startPosition += diameter + indent;
         }
     }
 
@@ -64,7 +65,7 @@ public class Flask : MonoBehaviour
 
     public bool TryPut(Ball ball)
     {
-        if (balls.Count == countBalls)
+        if (balls.Count == balls.Capacity)
         {
             return false;
         }

@@ -234,11 +234,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flasks: []
-  colors: []
-  ballPrefab: {fileID: 0}
-  flaskPrefab: {fileID: 0}
-  emptyFlasksCount: 0
-  flaskCapacity: 0
+  colors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  ballPrefab: {fileID: 1418745600097196809, guid: bb0c5e97222c15f4091497874181830d,
+    type: 3}
+  flaskPrefab: {fileID: 6459468049074439792, guid: 1ce93f09f56ac1a49b6535f25fdfbccd,
+    type: 3}
+  emptyFlasksCount: 1
+  flaskCapacity: 4
 --- !u!4 &1381196648
 Transform:
   m_ObjectHideFlags: 0
