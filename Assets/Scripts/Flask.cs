@@ -1,53 +1,53 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+
 public class Flask : MonoBehaviour
 {
-    [SerializeField] private List<Vector2> allCells;
+    [SerializeField] private Vector2[] allCells;
     [SerializeField] private List<Ball> balls;
 
-    [SerializeField] private int countBalls;
-    [SerializeField] private float radius;
-    [SerializeField] private float indent;
+    public bool IsFull => balls.Capacity == balls.Count;
+    public int Count => balls.Count;
 
+    public FlaskEvent Touched = new FlaskEvent();
 
-    void Start()
+    private void OnMouseDown()
     {
-        GetCountCell(countBalls, radius, indent);
+        Touched.Invoke(this);
     }
 
-    void Update()
+    public void CalculateBallPositions(int countBalls, float radius, float indent)
     {
-        
-    }
+        allCells = new Vector2[countBalls];
+        balls = new List<Ball>(countBalls);
 
-    private void GetCountCell(int countBalls, float radius, float indent)
-    {
         var localBorder = transform.position.y - transform.localScale.y * 0.5f;
         var startPosition = localBorder + indent + radius;
-        var diametr = radius * 2;
-        for(int i = 0; i < countBalls; i++)
+        var diameter = radius * 2;
+
+        for (int i = 0; i < countBalls; i++)
         {
-            allCells.Add(new Vector2(transform.position.x, startPosition));
-            startPosition += diametr + indent;
+            allCells[i] = new Vector2(transform.position.x, startPosition);
+            startPosition += diameter + indent;
         }
     }
 
-    public bool CollectedWithSameColors()
+    //неоптимизировано
+    public bool IsFullAndSameColors()
     {
-        if (balls.Count != countBalls || balls.Count == 0)
+        if (!IsFull)
             return false;
 
         Color color = balls[0].Color;
 
-        for(int i = 1; i < balls.Count; i++)
-            if (color != balls[i].Color)
+        foreach (var item in balls)
+            if (item.Color != color)
                 return false;
 
         return true;
     }
 
-    private bool TryTake(out Ball ball)
+    public bool TryTake(out Ball ball)
     {
         if (balls.Count == 0)
         {
@@ -63,25 +63,26 @@ public class Flask : MonoBehaviour
         }
     }
 
-    private bool TryPut(Ball ball)
+    public bool TryPut(Ball ball)
     {
-        if (balls.Count == countBalls)
+        if (balls.Count == balls.Capacity)
         {
             return false;
         }
         else
         {
             balls.Add(ball);
+            ball.transform.SetParent(this.transform);
             ball.transform.position = allCells[balls.Count - 1];
             return true;
         }
     }
 
-    //void OnDrawGizmosSelected()
-    //{
+    // void OnDrawGizmosSelected()
+    // {
     //    // Draw a yellow sphere at the transform's position
     //    Gizmos.color = Color.yellow;
     //    foreach (var item in allCells)
-    //        Gizmos.DrawSphere(item, ballSize);
-    //}
+    //        Gizmos.DrawSphere(item, radius);
+    // }
 }
