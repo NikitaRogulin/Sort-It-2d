@@ -57,20 +57,40 @@ public class GameManager : MonoBehaviour
     private void SpawnFlasks()
     {
         //временно
-        Vector3 spawnPoint = new Vector3(-2, 0, 1);
-        Vector3 indent = new Vector3(flaskPrefab.transform.localScale.x * 2, 0);
+        int flaskCount = colors.Length + emptyFlasksCount;
+        flasks = new Flask[flaskCount];
 
-        flasks = new Flask[colors.Length + emptyFlasksCount];
+        int rows = flaskCount % 5 > 0 ? flaskCount / 5 + 1 : flaskCount / 5;
+        int columns = flaskCount % rows > 0 ? flaskCount / rows + 1 : flaskCount / rows;
 
-        for (int i = 0; i < flasks.Length; i++)
+        Vector3 flaskSize = flaskPrefab.transform.localScale;
+
+        Vector3 h = new Vector3(flaskPrefab.transform.localScale.x * 2, 0, 0);
+        Vector3 v = new Vector3(0, flaskPrefab.transform.localScale.y + 0.2f + 2f, 0);
+        Vector3 spawn = new Vector3(0, 0, 1) - (h * (columns / 2)) - (v * (rows / 2));
+
+        if (columns % 2 == 0)
+            spawn.x += flaskPrefab.transform.localScale.x;
+        if (rows % 2 == 0)
+            spawn.y += v.y * 0.5f;
+
+        Camera.main.orthographicSize += (rows - 1) * 3;
+
+        float startPosX = spawn.x;
+
+        for (int i = 0; i < rows; i++)
         {
-            var flask = Instantiate(flaskPrefab, spawnPoint, Quaternion.identity);
-            flask.CalculateBallPositions(flaskCapacity, ballPrefab.Radius, 0.1f);
-
-            flask.Touched.AddListener(OnFlaskTouch);
-            flasks[i] = flask;
-
-            spawnPoint += indent;
+            for (int j = 0; j < columns; j++)
+            {
+                if (i * columns + j >= flaskCount)
+                    break;
+                var flask = Instantiate(flaskPrefab, spawn, Quaternion.identity);
+                flask.CalculateBallPositions(flaskCapacity, ballPrefab.Radius, 0.1f);
+                flask.Touched.AddListener(OnFlaskTouch);
+                flasks[i * columns + j] = flask;
+                spawn += h;
+            }
+            spawn = new Vector3(startPosX, spawn.y, 1) + v;
         }
     }
 
