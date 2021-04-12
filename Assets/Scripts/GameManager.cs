@@ -9,8 +9,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Flask flaskPrefab;
     [SerializeField] private int emptyFlasksCount;
     [SerializeField] private int flaskCapacity;
+    [SerializeField] private AudioSource musicBackground;
 
-    private Ball taken;
+    private Ball takenBall;
+    private bool collidersEnabled = true;
 
     public IReadOnlyList<Flask> Flasks => flasks;
     public IReadOnlyList<Color> Colors => colors;
@@ -19,17 +21,7 @@ public class GameManager : MonoBehaviour
     {
         SpawnFlasks();
         FillFlasks();
-    }
-
-    private void OnFlaskTouch(Flask flask)
-    {
-        if (taken == null)
-            flask.TryTake(out taken);
-        else if (flask.TryPut(taken))
-        {
-            taken = null;
-            CheckWin();
-        }
+        musicBackground.Play();
     }
 
     private void CheckWin()
@@ -57,8 +49,39 @@ public class GameManager : MonoBehaviour
     private void SpawnFlasks()
     {
         //временно
-        Vector3 spawnPoint = new Vector3(-2, 0, 1);
+        Vector3 spawnPoint = new Vector3(0, 0, 1);
         Vector3 indent = new Vector3(flaskPrefab.transform.localScale.x * 2, 0);
+
+        int rows = 0;
+        int columns = 0;
+
+        int flasksCount = colors.Length + emptyFlasksCount;
+
+        //4 -  4
+        //5 -  5 
+        //6 -  3 ; 3
+        //7 -  3 ; 4
+        //8 -  4 ; 4
+        //9 -  4 ; 5
+        //10 - 5 ; 5 
+        //11 - 4 ; 4 ; 3
+        //12 - 4 ; 4 ; 4
+        //13 - 5 ; 4 ; 4
+        //14 - 5 ; 5 ; 4
+        //15 - 5 ; 5 ; 5
+
+        if (flasksCount % 2 == 0 && flasksCount > 5)
+        {
+            columns = flasksCount / 2;
+
+        }
+        else if(flasksCount % 3 == 0 && flasksCount > 9)
+        {
+
+        }
+        else
+            rows = flasksCount / 5;
+
 
         flasks = new Flask[colors.Length + emptyFlasksCount];
 
@@ -74,15 +97,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnFlaskTouch(Flask flask)
+    {
+        if (takenBall == null && flask.TryTake(out takenBall))
+        {
+            ActiveCollider();
+            takenBall.Arrived.AddListener(ActiveCollider);
+        } 
+        else if (flask.TryPut(takenBall))
+        {
+            ActiveCollider();
+            takenBall.Arrived.AddListener(() =>
+            {
+                takenBall.Arrived.RemoveAllListeners();
+                takenBall = null;
+            });
+            CheckWin();
+        }
+    }
+
     private void FillFlasks()
     {
         Ball[] balls = new Ball[flaskCapacity * colors.Length];
+
         for (int i = 0; i < balls.Length; i++)
         {
             var ball = Instantiate(ballPrefab);
             ball.Color = colors[i % colors.Length];
             balls[i] = ball;
         }
+
         for (int i = 0; i < balls.Length; i++)
         {
             int toSwap = Random.Range(0, balls.Length);
@@ -90,13 +134,23 @@ public class GameManager : MonoBehaviour
             balls[toSwap] = balls[i];
             balls[i] = buf;
         }
+
         Flask flask = flasks[0];
         int next = 1;
         for (int i = 0; i < balls.Length; i++)
         {
             if (flask.IsFull)
                 flask = flasks[next++];
-            flask.TryPut(balls[i]);
+            flask.PutImmediate(balls[i]);
+        }
+    }
+
+    private void ActiveCollider()
+    {
+        collidersEnabled = !collidersEnabled;
+        foreach (var e in flasks)
+        {
+            e.GetComponent<Collider2D>().enabled = collidersEnabled;
         }
     }
 }
