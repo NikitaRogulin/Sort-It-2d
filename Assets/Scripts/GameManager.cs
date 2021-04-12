@@ -65,14 +65,15 @@ public class GameManager : MonoBehaviour
 
         Vector3 flaskSize = flaskPrefab.transform.localScale;
 
-        Vector3 h = new Vector3(flaskPrefab.transform.localScale.x * 2, 0, 0);
-        Vector3 v = new Vector3(0, flaskPrefab.transform.localScale.y + 0.2f + 2f, 0);
-        Vector3 spawn = new Vector3(0, 0, 1) - (h * (columns / 2)) - (v * (rows / 2));
+        Vector3 horizontalPadding = new Vector3(flaskPrefab.transform.localScale.x * 2, 0, 0);
+        Vector3 verticalPadding = new Vector3(0, flaskPrefab.transform.localScale.y + ballPrefab.transform.localScale.x, 0);
 
-        if (columns % 2 == 0)
-            spawn.x += flaskPrefab.transform.localScale.x;
+        Vector3 spawn = new Vector3(0, 0, 1) - (horizontalPadding * (columns / 2)) - (verticalPadding * (rows / 2));
+
+        // if (columns % 2 == 0)
+        //     spawn.x += flaskPrefab.transform.localScale.x;
         if (rows % 2 == 0)
-            spawn.y += v.y * 0.5f;
+            spawn.y += verticalPadding.y * 0.5f;
 
         Camera.main.orthographicSize += (rows - 1) * 3;
 
@@ -88,9 +89,9 @@ public class GameManager : MonoBehaviour
                 flask.CalculateBallPositions(flaskCapacity, ballPrefab.Radius, 0.1f);
                 flask.Touched.AddListener(OnFlaskTouch);
                 flasks[i * columns + j] = flask;
-                spawn += h;
+                spawn += horizontalPadding;
             }
-            spawn = new Vector3(startPosX, spawn.y, 1) + v;
+            spawn = new Vector3(startPosX, spawn.y, 1) + verticalPadding;
         }
     }
 
