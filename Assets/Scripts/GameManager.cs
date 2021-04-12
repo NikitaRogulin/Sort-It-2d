@@ -3,144 +3,27 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private Flask[] flasks;
-    [SerializeField] private Color[] colors;
-    [SerializeField] private Ball ballPrefab;
-    [SerializeField] private Flask flaskPrefab;
-    [SerializeField] private int emptyFlasksCount;
-    [SerializeField] private int flaskCapacity;
     [SerializeField] private AudioSource musicBackground;
 
-    private Ball takenBall;
-    private bool collidersEnabled = true;
-
-    public IReadOnlyList<Flask> Flasks => flasks;
-    public IReadOnlyList<Color> Colors => colors;
+    private GameLevel levelComp;
+    private int level = 1;
 
     private void Start()
     {
-        SpawnFlasks();
-        FillFlasks();
         musicBackground.Play();
+        levelComp = GetComponent<GameLevel>();
+        GenerateLevel();
     }
 
-    private void CheckWin()
+    private void GenerateLevel()
     {
-        if (IsWin())
-        {
-            Debug.Log("wow!");
-        }
-        else
-        {
-            Debug.Log("not yet");
-        }
+        levelComp.Win.AddListener(OnWin);
+        levelComp.SpawnFlasks(level);
     }
 
-    private bool IsWin()
+    private void OnWin()
     {
-        int collected = 0;
-        //неоптимизировано
-        foreach (var item in flasks)
-            if (item.IsFullAndSameColors())
-                collected++;
-        return collected == colors.Length;
-    }
-
-    private void SpawnFlasks()
-    {
-        //временно
-        int flaskCount = colors.Length + emptyFlasksCount;
-        flasks = new Flask[flaskCount];
-
-        int rows = flaskCount % 5 > 0 ? flaskCount / 5 + 1 : flaskCount / 5;
-        int columns = flaskCount % rows > 0 ? flaskCount / rows + 1 : flaskCount / rows;
-
-        Vector3 flaskSize = flaskPrefab.transform.localScale;
-
-        Vector3 horizontalPadding = new Vector3(flaskPrefab.transform.localScale.x * 2, 0, 0);
-        Vector3 verticalPadding = new Vector3(0, flaskPrefab.transform.localScale.y + ballPrefab.transform.localScale.x, 0);
-
-        Vector3 spawn = new Vector3(0, 0, 1) - (horizontalPadding * (columns / 2)) - (verticalPadding * (rows / 2));
-
-        // if (columns % 2 == 0)
-        //     spawn.x += flaskPrefab.transform.localScale.x;
-        if (rows % 2 == 0)
-            spawn.y += verticalPadding.y * 0.5f;
-
-        Camera.main.orthographicSize += (rows - 1) * 3;
-
-        float startPosX = spawn.x;
-
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < columns; j++)
-            {
-                if (i * columns + j >= flaskCount)
-                    break;
-                var flask = Instantiate(flaskPrefab, spawn, Quaternion.identity);
-                flask.CalculateBallPositions(flaskCapacity, ballPrefab.Radius, 0.1f);
-                flask.Touched.AddListener(OnFlaskTouch);
-                flasks[i * columns + j] = flask;
-                spawn += horizontalPadding;
-            }
-            spawn = new Vector3(startPosX, spawn.y, 1) + verticalPadding;
-        }
-    }
-
-    private void OnFlaskTouch(Flask flask)
-    {
-        if (takenBall == null && flask.TryTake(out takenBall))
-        {
-            ActiveCollider();
-            takenBall.Arrived.AddListener(ActiveCollider);
-        } 
-        else if (flask.TryPut(takenBall))
-        {
-            ActiveCollider();
-            takenBall.Arrived.AddListener(() =>
-            {
-                takenBall.Arrived.RemoveAllListeners();
-                takenBall = null;
-            });
-            CheckWin();
-        }
-    }
-
-    private void FillFlasks()
-    {
-        Ball[] balls = new Ball[flaskCapacity * colors.Length];
-
-        for (int i = 0; i < balls.Length; i++)
-        {
-            var ball = Instantiate(ballPrefab);
-            ball.Color = colors[i % colors.Length];
-            balls[i] = ball;
-        }
-
-        for (int i = 0; i < balls.Length; i++)
-        {
-            int toSwap = Random.Range(0, balls.Length);
-            var buf = balls[toSwap];
-            balls[toSwap] = balls[i];
-            balls[i] = buf;
-        }
-
-        Flask flask = flasks[0];
-        int next = 1;
-        for (int i = 0; i < balls.Length; i++)
-        {
-            if (flask.IsFull)
-                flask = flasks[next++];
-            flask.PutImmediate(balls[i]);
-        }
-    }
-
-    private void ActiveCollider()
-    {
-        collidersEnabled = !collidersEnabled;
-        foreach (var e in flasks)
-        {
-            e.GetComponent<Collider2D>().enabled = collidersEnabled;
-        }
+        level++;
+        GenerateLevel();
     }
 }

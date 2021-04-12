@@ -32,18 +32,6 @@ public class Ball : MonoBehaviour
     {
         StartCoroutine(ISteps(pos));
     }
-
-    //IEnumerator ISteps(Vector3 point)
-    //{
-    //    Vector3 direction = point - transform.position;
-    //    while (direction.sqrMagnitude > 0.0001f)
-    //    {
-    //        transform.position += direction.normalized * speed * Time.deltaTime;
-    //        direction = point - transform.position;
-    //        yield return null;
-    //    }
-    //}
-
     private IEnumerator ISteps(Vector3 point)
     {
         float totalMovementTime = 5f;
