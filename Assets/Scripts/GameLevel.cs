@@ -16,13 +16,14 @@ public class GameLevel : MonoBehaviour
     {
         generator = GetComponent<LevelGenerator>();
     }
+
     public void GenerateLevel(int level)
     {
         generator.GenerateLevel(level);
         flasks = generator.Flasks;
         colors = generator.Colors;
-        
-        foreach(var item in flasks)
+
+        foreach (var item in flasks)
         {
             item.Touched.AddListener(OnFlaskTouch);
         }
@@ -39,12 +40,12 @@ public class GameLevel : MonoBehaviour
     private bool IsWin()
     {
         return false;
-        // int collected = 0;
-        // //неоптимизировано
-        // foreach (var item in flasks)
-        //     if (item.IsFullAndSameColors())
-        //         collected++;
-        // return collected == colors.Length;
+        int collected = 0;
+        //неоптимизировано
+        foreach (var item in flasks)
+            if (item.IsFullAndSameColors())
+                collected++;
+        return collected == colors.Length;
     }
 
     private void OnFlaskTouch(Flask flask)

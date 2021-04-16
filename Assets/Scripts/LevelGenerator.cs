@@ -29,33 +29,35 @@ public class LevelGenerator : MonoBehaviour
             actualColors[i] = allColors[i];
 
         FillFlasks(actualColors, flasksToSpawn * flaskCapacity);
+
     }
 
     private void SpawnFlasks(int flaskCount)
     {
         Vector3 flaskSize = flaskPrefab.transform.localScale;
         float ballRadius = ballPrefab.Radius;
+        Vector3 cell = new Vector3(flaskSize.x * 2, flaskSize.y + ballRadius * 2, 0);
 
         actualFlasks = new Flask[flaskCount];
 
         int rows = flaskCount % absoluteMaxFlaskInARow > 0 ? flaskCount / absoluteMaxFlaskInARow + 1 : flaskCount / absoluteMaxFlaskInARow;
         int columns = flaskCount % rows > 0 ? flaskCount / rows + 1 : flaskCount / rows;
 
-        Vector3 cell = new Vector3(flaskSize.x * 2, flaskSize.y + ballRadius * 2, 0);
-
-        Vector3 currentPos = Vector3.zero;
-
-        for (int i = 0, toSpawn = flaskCount, index = 0; i < rows; i++)
+        for (int i = 0; i < flaskCount; i++)
         {
-            for (int j = 0; j < columns && toSpawn > 0; j++, toSpawn--, index++)
-            {
-                actualFlasks[index] = Instantiate(flaskPrefab, currentPos, Quaternion.identity);
-                actualFlasks[index].CalculateBallPositions(flaskCapacity, ballRadius, 0.1f);
-                currentPos.x += cell.x;
-            }
-            currentPos.x = 0;
-            currentPos.y += cell.y;
+            Vector3 position = new Vector3(cell.x * (i % columns), cell.y * (i / columns));
+            actualFlasks[i] = Instantiate(flaskPrefab, position, Quaternion.identity);
+            actualFlasks[i].CalculateBallPositions(flaskCapacity, ballRadius, 0.1f);
         }
+
+        AdjustCameraPosition(rows, columns, cell);
+    }
+
+    private void AdjustCameraPosition(int rows, int columns, Vector3 cell)
+    {
+        var center = new Vector3(cell.x * (columns - 1), cell.y * (rows - 1)) / 2;
+        Camera.main.orthographicSize += (rows - 1) * 3;
+        Camera.main.transform.position = new Vector3(center.x, center.y, -10);
     }
 
     private void FillFlasks(Color[] colors, int ballsToSpawn)

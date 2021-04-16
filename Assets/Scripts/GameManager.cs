@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource musicBackground;
 
     private GameLevel levelComp;
-    private int level = 0;
+    [SerializeField] private int level = 0;
 
     private void Start()
     {
