@@ -39,7 +39,6 @@ public class GameLevel : MonoBehaviour
 
     private bool IsWin()
     {
-        return false;
         int collected = 0;
         //неоптимизировано
         foreach (var item in flasks)
@@ -58,7 +57,7 @@ public class GameLevel : MonoBehaviour
         else if (flask.TryPut(takenBall))
         {
             ActiveCollider();
-            takenBall.Arrived.AddListener(() =>
+            takenBall.Arrived.AddListener(() => 
             {
                 takenBall.Arrived.RemoveAllListeners();
                 takenBall = null;

@@ -10,7 +10,6 @@ public class Flask : MonoBehaviour
 
     private ParticleSystem glow;
 
-    private bool isInteractive = true;
     private Vector3 highPoint;
     public Vector3 HighPoint => highPoint;
 

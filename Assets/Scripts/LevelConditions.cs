@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class LevelConditions
+public struct LevelConditions
 {
     public int minFlasks;
     public int maxFlasks;

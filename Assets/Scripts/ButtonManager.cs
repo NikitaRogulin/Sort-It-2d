@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource clickSound;
     void Start()
     {
         
@@ -17,9 +16,9 @@ public class ButtonManager : MonoBehaviour
     {
         
     }
+
     public void LoadingScene(int numberScene)
     {
-        clickSound.Play();
         SceneManager.LoadScene(numberScene);
     }
 }

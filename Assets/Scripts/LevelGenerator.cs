@@ -29,7 +29,6 @@ public class LevelGenerator : MonoBehaviour
             actualColors[i] = allColors[i];
 
         FillFlasks(actualColors, flasksToSpawn * flaskCapacity);
-
     }
 
     private void SpawnFlasks(int flaskCount)
