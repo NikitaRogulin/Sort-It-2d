@@ -21,6 +21,11 @@ public class GameLevel : MonoBehaviour
         generator.GenerateLevel(level);
         flasks = generator.Flasks;
         colors = generator.Colors;
+        
+        foreach(var item in flasks)
+        {
+            item.Touched.AddListener(OnFlaskTouch);
+        }
     }
 
     private void CheckWin()

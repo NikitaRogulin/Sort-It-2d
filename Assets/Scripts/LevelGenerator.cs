@@ -51,7 +51,6 @@ public class LevelGenerator : MonoBehaviour
             {
                 actualFlasks[index] = Instantiate(flaskPrefab, currentPos, Quaternion.identity);
                 actualFlasks[index].CalculateBallPositions(flaskCapacity, ballRadius, 0.1f);
-                // flasks[index].Touched.AddListener(OnFlaskTouch);
                 currentPos.x += cell.x;
             }
             currentPos.x = 0;
