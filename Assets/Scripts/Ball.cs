@@ -32,9 +32,10 @@ public class Ball : MonoBehaviour
     {
         StartCoroutine(ISteps(pos));
     }
+
     private IEnumerator ISteps(Vector3 point)
     {
-        float totalMovementTime = 5f;
+        float totalMovementTime = 15f;
         while (Vector3.Distance(transform.localPosition, point) > 0)
         {
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, point, Time.deltaTime * totalMovementTime);
