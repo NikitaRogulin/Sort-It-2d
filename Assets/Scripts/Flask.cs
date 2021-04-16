@@ -8,6 +8,8 @@ public class Flask : MonoBehaviour
     [SerializeField] private List<Ball> balls;
     [SerializeField] private AudioSource clickSound;
 
+    private ParticleSystem glow;
+
     private bool isInteractive = true;
     private Vector3 highPoint;
     public Vector3 HighPoint => highPoint;
@@ -16,6 +18,11 @@ public class Flask : MonoBehaviour
     public int Count => balls.Count;
 
     public FlaskEvent Touched = new FlaskEvent();
+
+    private void Start()
+    {
+        glow = GetComponentInChildren<ParticleSystem>(true);
+    }
 
     private void OnMouseDown()
     {
@@ -52,6 +59,9 @@ public class Flask : MonoBehaviour
             if (item.Color != color)
                 return false;
 
+        var m = glow.main;
+        m.startColor = color;
+        glow.gameObject.SetActive(true);
         return true;
     }
 
