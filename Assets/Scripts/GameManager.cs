@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -6,7 +5,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource musicBackground;
 
     private GameLevel levelComp;
-    private int level = 1;
+    [SerializeField] private int level = 0;
 
     private void Start()
     {
@@ -18,7 +17,7 @@ public class GameManager : MonoBehaviour
     private void GenerateLevel()
     {
         levelComp.Win.AddListener(OnWin);
-        levelComp.SpawnFlasks(level);
+        levelComp.GenerateLevel(level);
     }
 
     private void OnWin()
