@@ -4,17 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ButtonManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
-    void Start()
+    private void Awake()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        DontDestroyOnLoad(gameObject);
     }
 
     public void LoadingScene(int numberScene)
