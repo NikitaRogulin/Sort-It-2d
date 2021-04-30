@@ -19,7 +19,8 @@ public class GameLevel : MonoBehaviour
 
     public void GenerateLevel(int level)
     {
-        ClearLevel();
+        if(flasks != null)
+            ClearLevel();
 
         if (!generator.TryGenerateLevel(level))
             GenerateLevel(level);
@@ -43,12 +44,10 @@ public class GameLevel : MonoBehaviour
 
     private bool IsWin()
     {
-        int collected = 0;
-        //неоптимизировано
         foreach (var item in flasks)
-            if (item.AreSameColors())
-                collected++;
-        return collected == colors.Length;
+            if (!item.Completed)
+                return false;
+        return true;
     }
 
     private void OnFlaskTouch(Flask flask)
