@@ -47,11 +47,8 @@ public class Flask : MonoBehaviour
     }
 
     //неоптимизировано
-    public bool IsFullAndSameColors()
+    public bool AreSameColors()
     {
-        if (!IsFull)
-            return false;
-
         Color color = balls[0].Color;
 
         foreach (var item in balls)
@@ -102,5 +99,11 @@ public class Flask : MonoBehaviour
     {
         balls.Add(ball);
         ball.transform.position = allCells[balls.Count - 1];
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var ball in balls)
+            Destroy(ball.gameObject);
     }
 }

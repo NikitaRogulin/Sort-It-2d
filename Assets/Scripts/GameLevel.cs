@@ -19,7 +19,11 @@ public class GameLevel : MonoBehaviour
 
     public void GenerateLevel(int level)
     {
-        generator.GenerateLevel(level);
+        ClearLevel();
+
+        if (!generator.TryGenerateLevel(level))
+            GenerateLevel(level);
+
         flasks = generator.Flasks;
         colors = generator.Colors;
 
@@ -42,7 +46,7 @@ public class GameLevel : MonoBehaviour
         int collected = 0;
         //неоптимизировано
         foreach (var item in flasks)
-            if (item.IsFullAndSameColors())
+            if (item.AreSameColors())
                 collected++;
         return collected == colors.Length;
     }
@@ -73,5 +77,11 @@ public class GameLevel : MonoBehaviour
         {
             e.GetComponent<Collider2D>().enabled = collidersEnabled;
         }
+    }
+
+    private void ClearLevel()
+    {
+        foreach (var flask in flasks)
+            Destroy(flask.gameObject);
     }
 }
