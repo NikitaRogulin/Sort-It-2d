@@ -2,14 +2,19 @@
 
 public class Game : MonoBehaviour
 {
-    [SerializeField] private UIManager prefab;
-    private static UIManager game;
+    public static Game manager;
+
+    public static void Func()
+    {
+
+    }
 
     private void Awake()
     {
-        if (game == null)
+        if (manager == null)
         {
-            game = Instantiate(prefab);
+            manager = this;
+            DontDestroyOnLoad(gameObject);
         }
     }
 }

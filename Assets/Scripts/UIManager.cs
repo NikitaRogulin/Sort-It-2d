@@ -8,7 +8,14 @@ public class UIManager : MonoBehaviour
 {
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
+    }
+
+    public void Check()
+    {
+        var comp = GetComponent<AudioSource>();
+        Debug.Log($"{comp.gameObject.activeSelf} {comp.gameObject.activeInHierarchy} {comp.enabled} {comp.isActiveAndEnabled}");
+        comp.Play();
     }
 
     public void LoadingScene(int numberScene)
