@@ -44,10 +44,12 @@ public class GameLevel : MonoBehaviour
 
     private bool IsWin()
     {
+        int completedCount = 0;
         foreach (var item in flasks)
-            if (!item.Completed)
-                return false;
-        return true;
+            if (item.Completed)
+                completedCount++;
+        Debug.Log(completedCount);
+        return completedCount == colors.Length;
     }
 
     private void OnFlaskTouch(Flask flask)

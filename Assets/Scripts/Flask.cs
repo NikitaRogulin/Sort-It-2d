@@ -3,15 +3,25 @@ using UnityEngine;
 
 public class Flask : MonoBehaviour
 {
-
-    [SerializeField] private Vector2[] allCells;
+    [SerializeField] private Vector2[] allCellsPositions;
     [SerializeField] private List<Ball> balls;
-    [SerializeField] private AudioSource clickSound;
+
+    private bool completed;
 
     private ParticleSystem glow;
 
     private Vector3 highPoint;
     public Vector3 HighPoint => highPoint;
+
+    public bool Completed
+    {
+        get => completed;
+        private set
+        {
+            completed = value;
+            TurnGlow(completed);
+        }
+    }
 
     public bool IsFull => balls.Capacity == balls.Count;
     public int Count => balls.Count;
@@ -32,7 +42,7 @@ public class Flask : MonoBehaviour
     {
         highPoint = new Vector3(transform.position.x, transform.position.y + transform.localScale.y * 0.5f + radius + indent, transform.position.z);
 
-        allCells = new Vector2[countBalls];
+        allCellsPositions = new Vector2[countBalls];
         balls = new List<Ball>(countBalls);
 
         var localBorder = transform.position.y - transform.localScale.y * 0.5f;
@@ -41,7 +51,7 @@ public class Flask : MonoBehaviour
 
         for (int i = 0; i < countBalls; i++)
         {
-            allCells[i] = new Vector2(transform.position.x, startPosition);
+            allCellsPositions[i] = new Vector2(transform.position.x, startPosition);
             startPosition += diameter + indent;
         }
     }
@@ -55,10 +65,17 @@ public class Flask : MonoBehaviour
             if (item.Color != color)
                 return false;
 
-        var m = glow.main;
-        m.startColor = color;
-        glow.gameObject.SetActive(true);
         return true;
+    }
+
+    private void TurnGlow(bool value)
+    {
+        if (value)
+        {
+            var m = glow.main;
+            m.startColor = balls[0].Color;
+        }
+        glow.gameObject.SetActive(value);
     }
 
     public bool TryTake(out Ball ball)
@@ -70,12 +87,12 @@ public class Flask : MonoBehaviour
         }
         else
         {
+            Completed = false;
             int index = balls.Count - 1;
             ball = balls[index];
             balls.RemoveAt(index);
-            ball.Take();
+            ball.Use(true);
             ball.Move(highPoint);
-            clickSound.Play();
             return true;
         }
     }
@@ -88,17 +105,20 @@ public class Flask : MonoBehaviour
         }
         else
         {
+            //ball.transform.SetParent(transform);
             balls.Add(ball);
-            ball.Put();
-            ball.Move(allCells[balls.Count - 1]);
+            ball.Use(false);
+            ball.Move(allCellsPositions[balls.Count - 1]);
+            Completed = IsFull && AreSameColors();
             return true;
         }
     }
 
     public void PutImmediate(Ball ball)
     {
+        //ball.transform.SetParent(transform);
         balls.Add(ball);
-        ball.transform.position = allCells[balls.Count - 1];
+        ball.transform.position = allCellsPositions[balls.Count - 1];
     }
 
     private void OnDestroy()

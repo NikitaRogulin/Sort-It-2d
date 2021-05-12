@@ -6,10 +6,6 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    private void Awake()
-    {
-        //DontDestroyOnLoad(gameObject);
-    }
 
     public void Check()
     {

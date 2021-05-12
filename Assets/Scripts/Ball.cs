@@ -7,6 +7,7 @@ public class Ball : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     private Animator increase;
+
     public UnityEvent Arrived;
 
     public Color Color { get => spriteRenderer.color; set => spriteRenderer.color = value; }
@@ -18,22 +19,17 @@ public class Ball : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void Take()
+    public void Use(bool value)
     {
-        increase.SetBool("IsTake", true);
-    }
-
-    public void Put()
-    {
-        increase.SetBool("IsTake", false);
+        increase.SetBool("IsTake", value);
     }
 
     public void Move(Vector2 pos)
     {
-        StartCoroutine(ISteps(pos));
+        StartCoroutine(MoveCoroutine(pos));
     }
 
-    private IEnumerator ISteps(Vector3 point)
+    private IEnumerator MoveCoroutine(Vector3 point)
     {
         float totalMovementTime = 15f;
         while (Vector3.Distance(transform.localPosition, point) > 0)

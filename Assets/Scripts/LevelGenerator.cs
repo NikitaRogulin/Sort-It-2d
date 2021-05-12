@@ -13,6 +13,7 @@ public class LevelGenerator : MonoBehaviour
 
     private const int absoluteMaxFlaskInARow = 5;
 
+    //
     public bool TryGenerateLevel(int level)
     {
         var condition = conditions[level];
@@ -22,6 +23,7 @@ public class LevelGenerator : MonoBehaviour
         SpawnFlasks(flasksToSpawn + emptyFlasksToSpawn);
 
         Colors = new Color[flasksToSpawn];
+
         for (int i = 0; i < Colors.Length; i++)
             Colors[i] = allColors[i];
 
