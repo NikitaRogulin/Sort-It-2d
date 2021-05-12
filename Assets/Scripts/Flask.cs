@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Flask : MonoBehaviour
 {
@@ -27,6 +28,9 @@ public class Flask : MonoBehaviour
     public int Count => balls.Count;
 
     public FlaskEvent Touched = new FlaskEvent();
+    public UnityEvent SuccessInteraction = new UnityEvent();
+    public UnityEvent FailedInteraction = new UnityEvent();
+    
 
     private void Start()
     {
@@ -83,6 +87,7 @@ public class Flask : MonoBehaviour
         if (balls.Count == 0)
         {
             ball = null;
+            FailedInteraction.Invoke();
             return false;
         }
         else
@@ -93,6 +98,7 @@ public class Flask : MonoBehaviour
             balls.RemoveAt(index);
             ball.Use(true);
             ball.Move(highPoint);
+            SuccessInteraction.Invoke();
             return true;
         }
     }
@@ -101,22 +107,22 @@ public class Flask : MonoBehaviour
     {
         if (balls.Count == balls.Capacity)
         {
+            FailedInteraction.Invoke();
             return false;
         }
         else
         {
-            //ball.transform.SetParent(transform);
             balls.Add(ball);
             ball.Use(false);
             ball.Move(allCellsPositions[balls.Count - 1]);
             Completed = IsFull && AreSameColors();
+            SuccessInteraction.Invoke();
             return true;
         }
     }
 
     public void PutImmediate(Ball ball)
     {
-        //ball.transform.SetParent(transform);
         balls.Add(ball);
         ball.transform.position = allCellsPositions[balls.Count - 1];
     }

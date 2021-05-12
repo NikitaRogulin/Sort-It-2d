@@ -54,10 +54,13 @@ public class GameLevel : MonoBehaviour
 
     private void OnFlaskTouch(Flask flask)
     {
-        if (takenBall == null && flask.TryTake(out takenBall))
+        if (takenBall == null)
         {
-            ActiveCollider();
-            takenBall.Arrived.AddListener(ActiveCollider);
+            if (flask.TryTake(out takenBall))
+            {
+                ActiveCollider();
+                takenBall.Arrived.AddListener(ActiveCollider);
+            }
         }
         else if (flask.TryPut(takenBall))
         {
