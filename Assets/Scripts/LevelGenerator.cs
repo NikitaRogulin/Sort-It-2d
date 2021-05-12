@@ -1,4 +1,7 @@
 using UnityEngine;
+using System;
+
+using Random = UnityEngine.Random;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -8,18 +11,28 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private Flask flaskPrefab;
     [SerializeField] private int flaskCapacity = 4;
 
+    private int currentLevelConditionIndex;
+
     public Flask[] Flasks { get; private set; }
     public Color[] Colors { get; private set; }
 
     private const int absoluteMaxFlaskInARow = 5;
 
+    private void Awake()
+    {
+        Array.Sort(conditions, (x, y) => x.maxLevel > y.maxLevel ? 1 : -1);
+    }
+
     //
     public bool TryGenerateLevel(int level)
     {
-        var condition = conditions[level];
+        if (level > conditions[currentLevelConditionIndex].maxLevel)
+            currentLevelConditionIndex++;
 
-        int flasksToSpawn = Random.Range(condition.minFlasks, condition.maxFlasks);
-        int emptyFlasksToSpawn = Random.Range(condition.minEmptyFlasks, condition.maxEmptyFlasks);
+        var currentLevelCondition = conditions[currentLevelConditionIndex];
+
+        int flasksToSpawn = Random.Range(currentLevelCondition.minFlasks, currentLevelCondition.maxFlasks);
+        int emptyFlasksToSpawn = Random.Range(currentLevelCondition.minEmptyFlasks, currentLevelCondition.maxEmptyFlasks);
         SpawnFlasks(flasksToSpawn + emptyFlasksToSpawn);
 
         Colors = new Color[flasksToSpawn];
