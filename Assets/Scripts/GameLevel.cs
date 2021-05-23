@@ -11,6 +11,7 @@ public class GameLevel : MonoBehaviour
     private bool collidersEnabled = true;
 
     public UnityEvent Win;
+    public UnityEvent FlaskFailedEvent;
 
     private void Awake()
     {
@@ -23,7 +24,10 @@ public class GameLevel : MonoBehaviour
             ClearLevel();
 
         if (!generator.TryGenerateLevel(level))
+        {
             GenerateLevel(level);
+        }
+            
 
         flasks = generator.Flasks;
         colors = generator.Colors;
@@ -31,6 +35,7 @@ public class GameLevel : MonoBehaviour
         foreach (var item in flasks)
         {
             item.Touched.AddListener(OnFlaskTouch);
+            item.FailedInteraction.AddListener(() => FlaskFailedEvent.Invoke());
         }
     }
 
@@ -48,7 +53,6 @@ public class GameLevel : MonoBehaviour
         foreach (var item in flasks)
             if (item.Completed)
                 completedCount++;
-        Debug.Log(completedCount);
         return completedCount == colors.Length;
     }
 

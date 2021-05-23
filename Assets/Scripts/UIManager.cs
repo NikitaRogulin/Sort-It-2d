@@ -10,7 +10,6 @@ public class UIManager : MonoBehaviour
     public void Check()
     {
         var comp = GetComponent<AudioSource>();
-        Debug.Log($"{comp.gameObject.activeSelf} {comp.gameObject.activeInHierarchy} {comp.enabled} {comp.isActiveAndEnabled}");
         comp.Play();
     }
 

@@ -3,10 +3,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private AudioSource musicBackground;
-
-    private GameLevel levelComp;
     [SerializeField] private int level = 0;
 
+    private GameLevel levelComp;
+    public IntEvent LevelPass;
+    
     private void Start()
     {
         musicBackground.Play();
@@ -23,6 +24,8 @@ public class GameManager : MonoBehaviour
     private void OnWin()
     {
         level++;
+        levelComp.Win.RemoveListener(OnWin);
         GenerateLevel();
+        LevelPass.Invoke(level);
     }
 }
