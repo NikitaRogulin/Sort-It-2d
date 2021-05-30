@@ -44,19 +44,18 @@ public class Flask : MonoBehaviour
 
     public void CalculateBallPositions(int countBalls, float radius, float indent)
     {
-        highPoint = new Vector3(transform.position.x, transform.position.y + transform.localScale.y * 0.5f + radius + indent, transform.position.z);
+        highPoint = new Vector3(transform.position.x, transform.position.y + transform.localScale.y * 0.5f + radius, transform.position.z);
 
         allCellsPositions = new Vector2[countBalls];
         balls = new List<Ball>(countBalls);
 
-        var localBorder = transform.position.y - transform.localScale.y * 0.5f;
-        var startPosition = localBorder + indent + radius;
-        var diameter = radius * 2;
+        var bottomLocalBorder = transform.position.y - transform.localScale.y * 0.5f + radius;
+        var startPosition = bottomLocalBorder;
 
         for (int i = 0; i < countBalls; i++)
         {
             allCellsPositions[i] = new Vector2(transform.position.x, startPosition);
-            startPosition += diameter + indent;
+            startPosition += indent;
         }
     }
 

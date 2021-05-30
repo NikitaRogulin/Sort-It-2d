@@ -10,6 +10,9 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private Ball ballPrefab;
     [SerializeField] private Flask flaskPrefab;
     [SerializeField] private int flaskCapacity = 4;
+    [SerializeField] private float flaskPaddingX;
+    [SerializeField] private float flaskPaddingY;
+    [SerializeField] private float distanceBetweenBalls;
 
     private int currentLevelConditionIndex;
 
@@ -47,7 +50,7 @@ public class LevelGenerator : MonoBehaviour
     {
         Vector3 flaskSize = flaskPrefab.transform.localScale;
         float ballRadius = ballPrefab.Radius;
-        Vector3 cell = new Vector3(flaskSize.x * 2, flaskSize.y + ballRadius * 2, 0);
+        Vector3 cell = new Vector3(flaskSize.x * flaskPaddingX, flaskSize.y + ballRadius * flaskPaddingY, 0);
 
         Flasks = new Flask[flaskCount];
 
@@ -58,7 +61,7 @@ public class LevelGenerator : MonoBehaviour
         {
             Vector3 position = new Vector3(cell.x * (i % columns), cell.y * (i / columns));
             Flasks[i] = Instantiate(flaskPrefab, position, Quaternion.identity);
-            Flasks[i].CalculateBallPositions(flaskCapacity, ballRadius, 0.1f);
+            Flasks[i].CalculateBallPositions(flaskCapacity, ballRadius, distanceBetweenBalls);
         }
 
         AdjustCameraPosition(rows, columns, cell);
@@ -67,7 +70,7 @@ public class LevelGenerator : MonoBehaviour
     private void AdjustCameraPosition(int rows, int columns, Vector3 cell)
     {
         var center = new Vector3(cell.x * (columns - 1), cell.y * (rows - 1)) / 2;
-        Camera.main.orthographicSize += (rows - 1) * 3;
+        //Camera.main.orthographicSize += (rows - 1) * 3;
         Camera.main.transform.position = new Vector3(center.x, center.y, -10);
     }
 
