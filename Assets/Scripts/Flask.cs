@@ -129,6 +129,7 @@ public class Flask : MonoBehaviour
     private void OnDestroy()
     {
         foreach (var ball in balls)
-            Destroy(ball.gameObject);
+            if(ball != null)
+                Destroy(ball.gameObject);
     }
 }

@@ -2,16 +2,19 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource musicBackground;
     [SerializeField] private int level = 0;
+    new AudioController audio;
 
     private GameLevel levelComp;
-    public IntEvent LevelPass;
-    
+    public IntEvent LevelLoaded;
+
     private void Start()
     {
-        musicBackground.Play();
+        audio = GetComponent<AudioController>();
+        audio.Play();
+
         levelComp = GetComponent<GameLevel>();
+        level = PlayerPrefs.GetInt("level", 0);
         GenerateLevel();
     }
 
@@ -19,13 +22,14 @@ public class GameManager : MonoBehaviour
     {
         levelComp.Win.AddListener(OnWin);
         levelComp.GenerateLevel(level);
+        LevelLoaded.Invoke(level);
     }
 
     private void OnWin()
     {
         level++;
+        PlayerPrefs.SetInt("level", level);
         levelComp.Win.RemoveListener(OnWin);
         GenerateLevel();
-        LevelPass.Invoke(level);
     }
 }

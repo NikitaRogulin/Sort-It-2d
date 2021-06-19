@@ -1,11 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioController : MonoBehaviour
 {
-    public void PlayAudio(AudioClip clip)
+    [SerializeField] AudioMixerGroup group;
+    [SerializeField] AudioClip clip;
+
+    public void PlayOneShot()
     {
-        Game.manager.GetComponent<AudioSource>().PlayOneShot(clip);
+        AudioManager.Manager.PlayOneShot(group, clip);
+    }
+
+    public void PlayOneShot(AudioClip clip)
+    {
+        AudioManager.Manager.PlayOneShot(group, clip);
+    }
+
+    public void Play()
+    {
+        AudioManager.Manager.Play(group, clip);
+    }
+
+    public void Toggle(AudioMixerGroup group)
+    {
+        AudioManager.Manager.Toggle(group);
     }
 }

@@ -11,6 +11,7 @@ public class LevelScore : MonoBehaviour
     {
         leveleText = GetComponent<Text>();
     }
+
     public void ChangeText(int level)
     {
         leveleText.text = (level + 1).ToString();
